@@ -1,18 +1,18 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace SlidingSweetness
 {
-    [CreateAssetMenu(fileName = nameof(BlockSkinDataSO), menuName = "SO/GameSkin/" + nameof(BlockSkinDataSO))]
-    public class BlockSkinDataSO : ScriptableObject
+    [CreateAssetMenu(fileName = nameof(BlockSkinSetting), menuName = "SO/GameSkin/" + nameof(BlockSkinSetting))]
+    public class BlockSkinSetting : ScriptableObject
     {
-        public List<BlockData> Blocks;
+        public BlockData[] Blocks;
 
-        public BlockSkinDataSO()
+        public BlockSkinSetting()
         {
-            Blocks = new()
+            Blocks = new BlockData[5]
             {
                 new(BlockType.Block1),
                 new(BlockType.Block2),
@@ -20,6 +20,12 @@ namespace SlidingSweetness
                 new(BlockType.Block4),
                 new(BlockType.Block5),
             };
+        }
+
+        public Sprite GetBlockSprite(BlockType blockType, BlockSizeType blockSizeType)
+        {
+            var _block = Blocks.FirstOrDefault(x => x.BlockType == blockType);
+            return _block.GetSpriteSkinSize(blockSizeType);
         }
     }
 
@@ -30,18 +36,28 @@ namespace SlidingSweetness
         public BlockType BlockType;
 
         [TableList(AlwaysExpanded = true, ShowIndexLabels = false, DrawScrollView = false)]
-        public List<SkinData> Skins;
+        public SkinData[] Skins;
 
         public BlockData(BlockType blockType)
         {
             BlockType = blockType;
-            Skins = new()
+            Skins = new SkinData[4]
             {
                 new (BlockSizeType.Size1),
                 new (BlockSizeType.Size2),
                 new (BlockSizeType.Size3),
                 new (BlockSizeType.Size4),
             };
+        }
+
+        public SkinData GetSkinSize(BlockSizeType blockSizeType)
+        {
+            return Skins.FirstOrDefault(x => x.SizeType == blockSizeType);
+        }
+
+        public Sprite GetSpriteSkinSize(BlockSizeType blockSizeType)
+        {
+            return Skins.FirstOrDefault(x => x.SizeType == blockSizeType).BlockSprite;
         }
     }
 

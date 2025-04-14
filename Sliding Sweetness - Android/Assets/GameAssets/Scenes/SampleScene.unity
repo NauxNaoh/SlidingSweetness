@@ -417,7 +417,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 4936602480499959546, guid: 5326d9decca8a8b4db41c7c4c677bf3f, type: 3}
+  blockPrefab: {fileID: 4524188193989523788, guid: 8daa68869dd0a3f42a35996312481e2b, type: 3}
+  boardState: 0
   placePrepare: {fileID: 1001802369}
+  DifficultLevelSetting: {fileID: 11400000, guid: c1d5d2228e584614b83129824af2e440, type: 2}
+  BlockSkinSetting: {fileID: 11400000, guid: 7bdfe728221454348a26f8b27056659c, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -9,5 +9,10 @@ namespace SlidingSweetness
 
         public bool HasBlock => block != null;
         public Block Block => block;
+
+
+
+        public void SetBlockInCell(Block block) => this.block = block;
+
     }
 }
