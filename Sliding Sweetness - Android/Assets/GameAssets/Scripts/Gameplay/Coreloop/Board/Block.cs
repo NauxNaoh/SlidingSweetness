@@ -18,14 +18,14 @@ namespace SlidingSweetness
             sprBlock.sprite = spr;
         }
 
-        public void SetLocalDeviation(int size, float cellSize)
+        public void SetLocalDeviation(int size)
         {
-            var _deviationX = (size - 1) * cellSize / 2f ;
+            var _deviationX = (size - 1) * Board.cellSize / 2f;
             var _position = Vector2.zero;
             _position.x += _deviationX;
             tfmDeviation.transform.localPosition = _position;
 
-            sprBlock.transform.localScale = Vector3.one * (cellSize / 1.28f); //1 unit unity = 128 pixel png
+            sprBlock.transform.localScale = Vector3.one * (Board.cellSize / 1.28f); //1 unit unity = 128 pixel png
         }
 
     }

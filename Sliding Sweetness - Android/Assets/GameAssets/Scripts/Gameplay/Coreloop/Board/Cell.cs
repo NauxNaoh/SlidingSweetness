@@ -7,7 +7,7 @@ namespace SlidingSweetness
         private Block block;
 
 
-        public bool HasBlock => block != null;
+        public bool HasBlock => this.block != null;
         public Block Block => block;
 
 
