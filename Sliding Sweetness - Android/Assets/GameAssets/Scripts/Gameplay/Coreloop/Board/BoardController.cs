@@ -94,6 +94,7 @@ namespace SlidingSweetness
 
             for (int y = 0; y < 3; y++)
             {
+                bool _wasGen = false;
                 var _spawns = LevelCalculator.GenBlockCalculator(DifficultLevelSetting);
                 for (int i = 0; i < _spawns.Count; i++)
                 {
@@ -107,7 +108,10 @@ namespace SlidingSweetness
                     _block.SetLocalDeviation(_spawns[i].SizeInt);
 
                     board.SetBlockToCell(_block, _spawns[i].GridPos, _spawns[i].SizeInt);
+                    _wasGen = true;
                 }
+
+                if (!_wasGen) y--;
             }
 
             await UniTask.Yield();

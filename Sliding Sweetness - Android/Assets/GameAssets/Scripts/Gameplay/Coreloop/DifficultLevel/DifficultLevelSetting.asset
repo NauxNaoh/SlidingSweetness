@@ -16,12 +16,39 @@ MonoBehaviour:
   - Rate: 45
     LevelType: 0
     MinSize: 3
-    MaxSize: 5
-  - Rate: 35
-    LevelType: 1
-    MinSize: 4
+    MaxSize: 4
+    difficultSizes:
+    - SizeType: 0
+      Rate: 30
+    - SizeType: 1
+      Rate: 30
+    - SizeType: 2
+      Rate: 30
+    - SizeType: 3
+      Rate: 10
+  - Rate: 40
+    LevelType: 0
+    MinSize: 3
     MaxSize: 6
-  - Rate: 77
-    LevelType: 2
-    MinSize: 5
+    difficultSizes:
+    - SizeType: 0
+      Rate: 30
+    - SizeType: 1
+      Rate: 30
+    - SizeType: 2
+      Rate: 30
+    - SizeType: 3
+      Rate: 10
+  - Rate: 15
+    LevelType: 0
+    MinSize: 4
     MaxSize: 7
+    difficultSizes:
+    - SizeType: 0
+      Rate: 30
+    - SizeType: 1
+      Rate: 30
+    - SizeType: 2
+      Rate: 30
+    - SizeType: 3
+      Rate: 10

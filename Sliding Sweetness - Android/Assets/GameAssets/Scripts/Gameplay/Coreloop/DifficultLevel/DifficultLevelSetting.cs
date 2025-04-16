@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -9,9 +8,17 @@ namespace SlidingSweetness
     [CreateAssetMenu(fileName = nameof(DifficultLevelSetting), menuName = "SO/LevelSetting/" + nameof(DifficultLevelSetting))]
     public class DifficultLevelSetting : ScriptableObject
     {
-        [TableList]
         public DifficultLevel[] DifficultLevels;
 
+        public DifficultLevelSetting()
+        {
+            DifficultLevels = new DifficultLevel[3]
+            {
+                new(45, DifficultType.Easy, 3,4),
+                new(40, DifficultType.Easy, 3,6),
+                new(15, DifficultType.Easy, 4,7),
+            };
+        }
 
         public static BlockType[] cachedBlocks;
         public static BlockSizeType[] cachedBlockSizes;
@@ -48,7 +55,7 @@ namespace SlidingSweetness
                     return _level;
             }
 
-            return DifficultLevels.Length > 0 ? DifficultLevels[0] : new(rate: 0, LvType.Easy, minSize: 3, maxSize: 7);
+            return DifficultLevels.Length > 0 ? DifficultLevels[0] : new(rate: 0, DifficultType.Easy, minSize: 3, maxSize: 7);
         }
 
         float GetTotalPercent() => DifficultLevels.Sum<DifficultLevel>(x => x.Rate);
@@ -57,25 +64,60 @@ namespace SlidingSweetness
     [Serializable]
     public class DifficultLevel
     {
-        [Range(0f, 100f, order = 0)]
+        [TabGroup("Level")]
+        [Range(0f, 100f)]
         public float Rate;
-        public LvType LevelType;
-        [Range(3, 7)]
+
+        [TabGroup("Level")]
+        public DifficultType LevelType;
+
+        [TabGroup("Level")]
+        [Range(1, 7)]
         public int MinSize;
-        [Range(3, 7)]
+
+        [TabGroup("Level")]
+        [Range(1, 7)]
         public int MaxSize;
 
-        public DifficultLevel(float rate, LvType levelType, int minSize, int maxSize)
+
+        [TabGroup("Size")]
+        public DifficultSize[] difficultSizes;
+
+
+        public DifficultLevel(float rate, DifficultType levelType, int minSize, int maxSize)
         {
             Rate = rate;
             LevelType = levelType;
             MinSize = minSize;
             MaxSize = maxSize;
+
+            difficultSizes = new DifficultSize[4]
+            {
+                new(BlockSizeType.Size1, 30f),
+                new(BlockSizeType.Size2, 30f),
+                new(BlockSizeType.Size3, 30f),
+                new(BlockSizeType.Size4, 10f),
+            };
         }
 
         public int RandomTotalSizeBlock() => UnityEngine.Random.Range(MinSize, MaxSize + 1);
     }
 
-    public enum LvType { Easy, Medium, Hard }
+    [Serializable]
+    public class DifficultSize
+    {
+        public BlockSizeType SizeType;
+
+        [Range(0f, 100f)]
+        public float Rate;
+
+        public DifficultSize(BlockSizeType sizeType, float rate)
+        {
+            SizeType = sizeType;
+            Rate = rate;
+        }
+    }
+
+    public enum DifficultType { Easy, Medium, Hard }
 
 }
