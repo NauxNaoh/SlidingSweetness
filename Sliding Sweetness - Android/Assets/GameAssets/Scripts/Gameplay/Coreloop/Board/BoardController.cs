@@ -1,11 +1,12 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using N.Patterns;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace SlidingSweetness
 {
-    public class BoardController : MonoBehaviour
+    public class BoardController : Singleton<BoardController>
     {
         [Header("Prefabs")]
         [Required]
@@ -22,10 +23,7 @@ namespace SlidingSweetness
         private Board board;
         private Transform tfmCells;
         private Transform tfmBlocks;
-        [Required]
-        public DifficultLevelSetting DifficultLevelSetting;
-        [Required]
-        public BlockSkinSetting BlockSkinSetting;
+
         public BoardState BoardState => boardState;
 
 
@@ -37,53 +35,46 @@ namespace SlidingSweetness
             boardCTS = new CancellationTokenSource();
         }
 
-
-        private void Awake()
-        {
-            InitializeNew().Forget();
-        }
-
-        async UniTask InitializeNew()
+        public async UniTask InitializeNew(CancellationToken token)
         {
             SetBoardState(BoardState.Handling);
-            await GenBoard();
-            await GenerateStartGame();
+            await GenBoard(token);
+            await GenerateStartGame(token);
         }
 
         void SetBoardState(BoardState state) => boardState = state;
 
-        async UniTask GenBoard()
+        async UniTask GenBoard(CancellationToken token)
         {
             tfmCells = new GameObject("Cells").GetComponent<Transform>();
             tfmCells.SetParent(this.transform);
             tfmBlocks = new GameObject("Blocks").GetComponent<Transform>();
             tfmBlocks.SetParent(this.transform);
-
             board = new Board(transform.position, placePrepare.position, true);
             for (int y = 0; y < Board.boardSize.y; y++)
             {
                 for (int x = 0; x < Board.boardSize.x; x++)
                 {
-                    var _workPos = board.gridBoard.GetWorldPositionCenter(x, y);
+                    var _workPos = Board.gridBoard.GetWorldPositionCenter(x, y);
                     var _cell = CreateCell($"Cell[{x},{y}]");
                     _cell.transform.SetPositionAndRotation(_workPos, Quaternion.identity);
-                    board.gridBoard.SetValue(x, y, _cell);
+                    Board.gridBoard.SetValue(x, y, _cell);
                 }
             }
 
-            await UniTask.Yield();
+            await UniTask.Yield(token);
         }
 
 
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                GenerateStartGame().Forget();
-            }
-        }
+        //private void Update()
+        //{
+        //    if (Input.GetMouseButtonDown(0))
+        //    {
+        //        GenerateStartGame().Forget();
+        //    }
+        //}
 
-        async UniTask GenerateStartGame()
+        async UniTask GenerateStartGame(CancellationToken token)
         {
             for (int i = 0; i < tfmBlocks.childCount; i++)
             {
@@ -95,19 +86,18 @@ namespace SlidingSweetness
             for (int y = 0; y < 3; y++)
             {
                 bool _wasGen = false;
-                var _spawns = LevelCalculator.GenBlockCalculator(DifficultLevelSetting);
+                var _spawns = LevelCalculator.GenBlockCalculator(SOContainer.DifficultLevel);
                 for (int i = 0; i < _spawns.Count; i++)
                 {
                     _spawns[i].GridPos.y = y;
                     if (!board.IsBlockOccupiedBellow(_spawns[i].GridPos, _spawns[i].SizeInt)) continue;
 
-                    var _workPos = board.gridBoard.GetWorldPositionCenter(_spawns[i].GridPos);
+                    var _workPos = Board.gridBoard.GetWorldPositionCenter(_spawns[i].GridPos);
                     var _block = CreateBlock($"{_spawns[i].BlockType}-{_spawns[i].BlockSizeType}");
+                    _block.Initialize(_spawns[i]);
                     _block.transform.SetPositionAndRotation(_workPos, Quaternion.identity);
-                    _block.SetSpriteBlock(BlockSkinSetting.GetBlockSprite(_spawns[i].BlockType, _spawns[i].BlockSizeType));
-                    _block.SetLocalDeviation(_spawns[i].SizeInt);
-
                     board.SetBlockToCell(_block, _spawns[i].GridPos, _spawns[i].SizeInt);
+
                     _wasGen = true;
                 }
 
